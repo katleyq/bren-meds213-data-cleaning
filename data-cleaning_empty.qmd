@@ -61,7 +61,7 @@ Ok, we found our problematic values that are not numeric. There are a non-neglig
 
 snowsurvey_csv %>% 
   filter(Snow_cover == ".") %>% 
-  View
+  View()
 
 ```
 
@@ -81,30 +81,45 @@ We will now tackle the other problematic values:
 The problem is similar with "-", let's set it to NA
 
 ```{r}
-
+snowsurvey_fixed <- snowsurvey_csv %>% 
+  # filter(Snow_cover == ".") %>% 
+  mutate(Snow_cover = ifelse(Snow_cover == "-", NA, Snow_cover))
+snowsurvey_fixed
 ```
 
 "n/a" is pretty clear regarding how to fix it:
 
 ```{r}
-
+snowsurvey_fixed <- snowsurvey_csv %>% 
+  # filter(Snow_cover == ".") %>% 
+  mutate(Snow_cover = ifelse(Snow_cover == "n/a", NA, Snow_cover))
+snowsurvey_fixed
 ```
 
 "unk" is probably an abbreviation for unknown:
 
 ```{r}
-
+snowsurvey_fixed <- snowsurvey_csv %>% 
+  # filter(Snow_cover == ".") %>% 
+  mutate(Snow_cover = ifelse(Snow_cover == "unk", NA, Snow_cover))
+snowsurvey_fixed
 ```
 
 Finally we will set "<1" as zero (quite arbitrary indeed):
 
 ```{r}
-
+snowsurvey_fixed <- snowsurvey_csv %>% 
+  # filter(Snow_cover == ".") %>% 
+  mutate(Snow_cover = ifelse(Snow_cover == "<1", 0, Snow_cover))
+snowsurvey_fixed
 ```
 
 Now we can test if we now only have NAs as non numeric values in the column:
 
 ```{r}
+
+snowsurvey_fixed <- snowsurvey_fixed %>% 
+  mutate(Snow_cover = as.numeric(Snow_cover))
 
 ```
 
@@ -124,12 +139,17 @@ We have two values above 100, with an interesting 470%! ☃️ We should probabl
 
 ```{r}
 
+snowsurvey_fixed <- snowsurvey_fixed %>% 
+  mutate(Snow_cover = ifelse(Snow_cover > 100, NA, Snow_cover))
+
 ```
 
 Let's check for negative values:
 
 ```{r}
 
+snowsurvey_fixed %>% 
+  filter(Snow_cover < 0)
 ```
 
 No negative value detected ✅
@@ -150,6 +170,7 @@ write_csv(snowsurvey_fixed, file.path(datadir_processed, "snow_cover.csv"))
 Import the species csv files with the bird species information:
 
 ```{r}
+species <- read_csv(file.path(datadir_raw, species_file))
 
 ```
 
