@@ -38,11 +38,18 @@ Ok, the types are not what we were expecting for the percentages of cover. Let's
 
 ```{r}
 
+snowsurvey_csv %>% 
+  count(Snow_cover)
+
 ```
 
 Let's focus on the non-numeric values as a starting point:
 
 ```{r}
+
+snowsurvey_csv %>% 
+  count(Snow_cover) %>% 
+  filter(is.na(as.numeric(Snow_cover)))
 
 ```
 
@@ -52,11 +59,20 @@ Ok, we found our problematic values that are not numeric. There are a non-neglig
 
 ```{r}
 
+snowsurvey_csv %>% 
+  filter(Snow_cover == ".") %>% 
+  View
+
 ```
 
 Interestingly, when there is a "dot" for snow cover, it is also the case for all the other covers. Let's replace them all with NA since there is no supplemental information in the provided metadata
 
 ```{r}
+
+snowsurvey_fixed <- snowsurvey_csv %>% 
+  # filter(Snow_cover == ".") %>% 
+  mutate(Snow_cover = ifelse(Snow_cover == ".", NA, Snow_cover))
+snowsurvey_fixed
 
 ```
 
