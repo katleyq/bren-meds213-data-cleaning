@@ -169,7 +169,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ensure total cover = Snow_cover + Land_cover + water cover. ignore NAs using coalesce() because you cannot add them. this allows us to maintain the data we do have</span></span>
 <span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Total_cover =</span> <span class="fu">coalesce</span>(Snow_cover, <span class="dv">0</span>) <span class="sc">+</span> </span>
 <span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>           <span class="fu">coalesce</span>(Land_cover, <span class="dv">0</span>) <span class="sc">+</span> </span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>           <span class="fu">coalesce</span>(Water_cover, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>           <span class="fu">coalesce</span>(Water_cover, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove observations where total cover &gt; 100 because these are not logical and there is no way of guessing which values are right or wrong. i would try to contact the observers to see if they remember, but i think it's safe to drop the observations so it doesn't interfere with future analyses</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Total_cover <span class="sc">&lt;=</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Checking relationship between Snow_cover, Land_cover, Water_cover and Total_cover columns</p>
 <div class="cell">
@@ -178,6 +181,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">is_total_correct =</span> (Water_cover <span class="sc">+</span> Land_cover <span class="sc">+</span> Snow_cover) </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>         <span class="sc">==</span> Total_cover) <span class="sc">%&gt;%</span> </span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_total_correct <span class="sc">==</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Write the clean csv file</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_cleaned, here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/processed/all_cover_fixed_KatLe.csv"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/processed/all_cover_fixed_KatLe.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 42804 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (6): Site, Date, Plot, Location, Observer, Notes
+dbl (5): Year, Snow_cover, Water_cover, Land_cover, Total_cover
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
 </div>
 
 </main>

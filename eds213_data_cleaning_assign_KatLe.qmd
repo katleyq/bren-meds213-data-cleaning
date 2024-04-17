@@ -76,7 +76,10 @@ data_cleaned <- data %>%
   # ensure total cover = Snow_cover + Land_cover + water cover. ignore NAs using coalesce() because you cannot add them. this allows us to maintain the data we do have
   mutate(Total_cover = coalesce(Snow_cover, 0) + 
            coalesce(Land_cover, 0) + 
-           coalesce(Water_cover, 0))
+           coalesce(Water_cover, 0)) %>% 
+  
+  # remove observations where total cover > 100 because these are not logical and there is no way of guessing which values are right or wrong. i would try to contact the observers to see if they remember, but i think it's safe to drop the observations so it doesn't interfere with future analyses
+  filter(Total_cover <= 100)
   
 ```
 
@@ -89,4 +92,12 @@ data_checked <- data_cleaned %>%
          == Total_cover) %>% 
   filter(is_total_correct == FALSE)
   
+```
+
+Write the clean csv file
+
+```{r}
+write_csv(data_cleaned, here::here("data/processed/all_cover_fixed_KatLe.csv"))
+
+test <- read_csv(here::here("data/processed/all_cover_fixed_KatLe.csv"))
 ```
