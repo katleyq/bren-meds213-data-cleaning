@@ -5,6 +5,8 @@ format: html
 editor: visual
 ---
 
+GitHub repo: <https://github.com/katleyq/bren-meds213-data-cleaning>
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
